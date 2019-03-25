@@ -158,7 +158,7 @@ for i in range(start_epoch,args.epoch):
             avg_loss = loss.data.item()/(j+1)
             print('Avg training loss: ',avg_loss,' Training loss: ',loss.data.item(), ' iteration :', j+1)
             
-        if j % 1000 == 0:
+        if j % 5000 == 0:
             utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1, args)
         
         total_loss += loss.data.item()
@@ -167,7 +167,7 @@ for i in range(start_epoch,args.epoch):
     train_loss.append(total_loss/len(train_loader))
     
     # validation loss
-    
+    global_step = i * len(dev_loader)
     autoencoder.eval()
     for j,data in enumerate(dev_loader):
         original_kspace,masked_kspace,target, mask = data
@@ -191,11 +191,10 @@ for i in range(start_epoch,args.epoch):
             avg_loss = loss.data.item()/(j+1)
             print('Avg ValidationLoss loss: ',avg_loss,' Validation loss: ',loss.data.item(), ' iteration :', j+1)
             
-        if (j) % 1000 == 0:
+        if (j) % 5000 == 0:
             utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1, args)
         
         total_val_loss += loss.data.item()
-
     valid_loss.append(total_val_loss / len(dev_loader))
     
     print('saving')

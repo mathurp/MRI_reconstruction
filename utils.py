@@ -207,12 +207,12 @@ def plotimage(image):
     
 def transformshape(kspace):
     s = kspace.shape
-    kspace = np.reshape(kspace , (s[0],s[3],s[1],s[2]))
+    kspace = torch.reshape(kspace , (s[0],s[3],s[1],s[2]))
     return kspace
 
 def transformback(kspace):
     s = kspace.shape
-    kspace = np.reshape(kspace , (s[0],s[2],s[3],s[1]))
+    kspace = torch.reshape(kspace , (s[0],s[2],s[3],s[1]))
     return kspace
 
 def mse(imageA, imageB):
@@ -245,7 +245,6 @@ def compare_images(imageA, imageB,imageC,writer,iteration):
     plt.imshow(imageC)
     plt.axis("off")
     
-    plt.show()
     writer.add_figure('Comparision', fig, global_step = iteration)    
 
 def compareimageoutput(target,masked_kspace,outputkspace,mask,writer,iteration, args):
