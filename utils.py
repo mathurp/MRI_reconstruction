@@ -248,7 +248,7 @@ def compare_images(imageA, imageB,imageC,writer,iteration):
     plt.show()
     writer.add_figure('Comparision', fig, global_step = iteration)    
 
-def compareimageoutput(target,masked_kspace,outputkspace,mask,writer,iteration):
+def compareimageoutput(target,masked_kspace,outputkspace,mask,writer,iteration, args):
     unmask = np.where(mask==1.0, 0.0, 1.0)
     unmask = transforms.to_tensor(unmask)
     unmask = unmask.float()
@@ -256,8 +256,8 @@ def compareimageoutput(target,masked_kspace,outputkspace,mask,writer,iteration):
     output = output * unmask
     output = output + masked_kspace.data.cpu()
     imageA = np.array(target)[0]
-    imageB = np.array(kspacetoimage(output))[0]
-    imageC = np.array(kspacetoimage(masked_kspace.data.cpu()))[0]
+    imageB = np.array(kspacetoimage(output, args))[0]
+    imageC = np.array(kspacetoimage(masked_kspace.data.cpu(), args))[0]
     compare_images(imageA,imageB,imageC,writer,iteration)
 
 def onormalize(original_kspace, mean, std, eps=1e-11):

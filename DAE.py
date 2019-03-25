@@ -20,7 +20,7 @@ parser.add_argument("--challenge", default="singlecoil", choices=["singlecoil", 
 parser.add_argument("--batch-size", default=1, type=int)
 parser.add_argument("--learning-rate", default=0.0001, type=float)
 parser.add_argument("--epoch", default=10, type=int)
-parser.add_argument("--relu-slope", default=0.2, type=float)
+parser.add_argument("--reluslope", default=0.2, type=float)
 parser.add_argument("--checkpoint", default='DAEcheckpoint/best_model.pt')
 parser.add_argument("--exp-dir", default='DAEcheckpoint')
 parser.add_argument("--resume", default=False, type=bool, choices=[True, False])
@@ -159,7 +159,7 @@ for i in range(start_epoch,args.epoch):
             print('Avg training loss: ',avg_loss,' Training loss: ',loss.data.item(), ' iteration :', j+1)
             
         if j % 1000 == 0:
-            utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1)
+            utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1, args)
         
         total_loss += loss.data.item()
         writer.add_scalar('TrainLoss', loss.data.item()*1000, global_step + j+1)
@@ -192,7 +192,7 @@ for i in range(start_epoch,args.epoch):
             print('Avg ValidationLoss loss: ',avg_loss,' Validation loss: ',loss.data.item(), ' iteration :', j+1)
             
         if (j) % 1000 == 0:
-            utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1)
+            utils.compareimageoutput(target,masked_kspace,outputkspace,mask,writer,global_step + j+1, args)
         
         total_val_loss += loss.data.item()
 
