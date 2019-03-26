@@ -62,9 +62,9 @@ def create_submission_file(
     """
 
     if challenge not in {'singlecoil', 'multicoil'}:
-        raise ValueError(f'Challenge should be singlecoil or multicoil, not {challenge}')
+        raise ValueError('Challenge should be singlecoil or multicoil, not ' +  challenge)
 
-    phase_name = f'{challenge}_leaderboard'
+    phase_name = str(challenge) + '_leaderboard'
     submission_data = dict(
         recon_zip_url=submission_url,
         model_name=model_name,

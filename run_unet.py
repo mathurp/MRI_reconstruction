@@ -18,7 +18,7 @@ from common.subsample import MaskFunc
 from common.utils import save_reconstructions
 from data import transforms
 from data.mri_data import SliceData
-from models.unet.unet_model import UnetModel
+from unet_model import UnetModel
 
 
 class DataTransform:
@@ -35,7 +35,7 @@ class DataTransform:
                 appropriate shape.
         """
         if which_challenge not in ('singlecoil', 'multicoil'):
-            raise ValueError(f'Challenge should either be "singlecoil" or "multicoil"')
+            raise ValueError('Challenge should either be "singlecoil" or "multicoil"')
         self.resolution = resolution
         self.which_challenge = which_challenge
         self.mask_func = mask_func
@@ -82,7 +82,7 @@ def create_data_loaders(args):
     if args.mask_kspace:
         mask_func = MaskFunc(args.center_fractions, args.accelerations)
     data = SliceData(
-        root=args.data_path / f'{args.challenge}_{args.data_split}',
+        root=args.data_path / (str(args.challenge) + "_" + str(args.data_split)),
         transform=DataTransform(args.resolution, args.challenge, mask_func),
         sample_rate=1.,
         challenge=args.challenge
@@ -109,6 +109,9 @@ def load_model(checkpoint_file):
 def run_unet(args, model, data_loader):
     model.eval()
     reconstructions = defaultdict(list)
+
+    count = 0
+
     with torch.no_grad():
         for (input, mean, std, fnames, slices) in data_loader:
             input = input.unsqueeze(1).to(args.device)
@@ -116,7 +119,9 @@ def run_unet(args, model, data_loader):
             for i in range(recons.shape[0]):
                 recons[i] = recons[i] * std[i] + mean[i]
                 reconstructions[fnames[i]].append((slices[i].numpy(), recons[i].numpy()))
-
+                count += 1
+                if count % 100 == 0:
+                    print(count)
     reconstructions = {
         fname: np.stack([pred for _, pred in sorted(slice_preds)])
         for fname, slice_preds in reconstructions.items()
@@ -138,7 +143,7 @@ def create_arg_parser():
                              'for test data')
     parser.add_argument('--data-split', choices=['val', 'test'], required=True,
                         help='Which data partition to run on: "val" or "test"')
-    parser.add_argument('--checkpoint', type=pathlib.Path, required=True,
+    parser.add_argument('--checkpoint', required=True,
                         help='Path to the U-Net model')
     parser.add_argument('--out-dir', type=pathlib.Path, required=True,
                         help='Path to save the reconstructions to')

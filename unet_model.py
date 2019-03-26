@@ -51,8 +51,7 @@ class ConvBlock(nn.Module):
         return self.layers(input)
 
     def __repr__(self):
-        return f'ConvBlock(in_chans={self.in_chans}, out_chans={self.out_chans}, ' \
-            f'drop_prob={self.drop_prob})'
+        return "ConvBlock(in_chans=%d, out_chans=%d, drop_prob=%f)" % (self.in_chans, self.out_chans, self.drop_prob)
 
 
 class UnetModel(nn.Module):
