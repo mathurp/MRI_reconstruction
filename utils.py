@@ -4,10 +4,13 @@ import math
 import shutil
 
 def cartesianToPolar(input):
-    magnitude = np.vectorize(np.linalg.norm)
-    phase = np.vectorize(np.angle)
+    if input.dtype != 'complex64':
+        input = input[...,0] + 1j * input[...,1]
 
-    return np.dstack([magnitude, phase])
+    magnitude = np.vectorize(np.linalg.norm)
+    phase = np.vectorize(np.angle)        
+
+    return np.dstack([magnitude(input), phase(input)])
 
 def polarToCartesian(input):
     output = np.zeros((input.shape[0], input.shape[1]), dtype=np.complex64)
